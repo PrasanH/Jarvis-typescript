@@ -7,10 +7,8 @@ A modern chat application built with Next.js 15 and TypeScript, featuring chat h
 - ✨ Beautiful, responsive chat UI
 - 💬 Real-time chat with Gemini AI
 - 📁 Chat history sidebar (stored locally)
-- 🎨 Dark mode support
 - 🔧 Customizable system prompts
 - 🤖 Multiple Gemini models
-- 💾 Local storage for chat persistence
 
 ## 📋 Prerequisites
 
@@ -189,16 +187,7 @@ As a beginner, here are helpful resources:
 - **TypeScript**: https://www.typescriptlang.org/docs/handbook/intro.html
 - **Tailwind CSS**: https://tailwindcss.com/docs
 
-## 🎯 Next Steps
 
-Want to enhance your app? Try:
-- [ ] Add authentication
-- [ ] Deploy to Vercel/Netlify
-- [ ] Add voice input
-- [ ] Export chat history
-- [ ] Add file uploads
-- [ ] Implement chat sharing
-- [ ] Add search functionality
 
 ## 📄 License
 
