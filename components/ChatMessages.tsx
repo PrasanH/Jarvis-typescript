@@ -3,6 +3,8 @@
 import { Message } from '@/types/chat';
 import { User, Bot } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -49,7 +51,29 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
                 : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white'
             }`}
           >
-            <p className="whitespace-pre-wrap break-words">{message.content}</p>
+            <div className="prose prose-sm max-w-none dark:prose-invert whitespace-pre-wrap">
+              <ReactMarkdown 
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  code: ({ inline, className, children, ...props }: any) => {
+                    const match = /language-(\w+)/.exec(className || '');
+                    return !inline && match ? (
+                      <pre className="bg-gray-900 dark:bg-gray-950 rounded-md p-3 overflow-x-auto my-2">
+                        <code {...props}>
+                          {children}
+                        </code>
+                      </pre>
+                    ) : (
+                      <code className="bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm" {...props}>
+                        {children}
+                      </code>
+                    );
+                  }
+                }}
+              >
+                {message.content}
+              </ReactMarkdown>
+            </div>
           </div>
 
           {message.role === 'user' && (
