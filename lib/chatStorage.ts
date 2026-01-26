@@ -72,6 +72,14 @@ export const chatStorage = {
     }
   },
 
+  // Rename a session
+  async renameSession(id: string, newTitle: string): Promise<void> {
+    const session = await this.getSession(id);
+    if (session) {
+      await this.updateSession(id, { title: newTitle });
+    }
+  },
+
   // Add a message to a session
   async addMessage(sessionId: string, message: Message): Promise<void> {
     const session = await this.getSession(sessionId);

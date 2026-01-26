@@ -1,7 +1,8 @@
 'use client';
 
+import React from 'react';
 import { ChatSession } from '@/types/chat';
-import { MessageSquare, Trash2, Plus } from 'lucide-react';
+import { MessageSquare, Trash2, Plus, Edit2, Check, X } from 'lucide-react';
 
 interface ChatSidebarProps {
   sessions: ChatSession[];
@@ -9,6 +10,7 @@ interface ChatSidebarProps {
   onSelectSession: (id: string) => void;
   onNewChat: () => void;
   onDeleteSession: (id: string) => void;
+  onRenameSession: (id: string, newTitle: string) => void;
 }
 
 export default function ChatSidebar({
@@ -17,7 +19,32 @@ export default function ChatSidebar({
   onSelectSession,
   onNewChat,
   onDeleteSession,
+  onRenameSession,
 }: ChatSidebarProps) {
+  const [editingId, setEditingId] = React.useState<string | null>(null);
+  const [editTitle, setEditTitle] = React.useState('');
+
+  const handleStartRename = (session: ChatSession, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingId(session.id);
+    setEditTitle(session.title);
+  };
+
+  const handleSaveRename = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (editTitle.trim()) {
+      onRenameSession(id, editTitle.trim());
+    }
+    setEditingId(null);
+    setEditTitle('');
+  };
+
+  const handleCancelRename = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingId(null);
+    setEditTitle('');
+  };
+
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -59,29 +86,71 @@ export default function ChatSidebar({
                     ? 'bg-gray-800'
                     : 'hover:bg-gray-800'
                 }`}
-                onClick={() => onSelectSession(session.id)}
+                onClick={() => editingId !== session.id && onSelectSession(session.id)}
               >
                 <div className="flex items-start gap-2">
                   <MessageSquare size={16} className="mt-1 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {session.title}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {formatDate(session.updatedAt)}
-                    </p>
+                    {editingId === session.id ? (
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="text"
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleSaveRename(session.id);
+                            if (e.key === 'Escape') handleCancelRename(e as any);
+                          }}
+                          className="flex-1 bg-gray-700 text-white text-sm px-2 py-1 rounded border border-gray-600 focus:outline-none focus:border-blue-500"
+                          autoFocus
+                        />
+                        <button
+                          onClick={(e) => handleSaveRename(session.id, e)}
+                          className="p-1 hover:bg-gray-700 rounded text-green-500"
+                        >
+                          <Check size={14} />
+                        </button>
+                        <button
+                          onClick={handleCancelRename}
+                          className="p-1 hover:bg-gray-700 rounded text-red-500"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-sm font-medium truncate">
+                          {session.title}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {formatDate(session.updatedAt)}
+                        </p>
+                      </>
+                    )}
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (confirm('Delete this chat?')) {
-                        onDeleteSession(session.id);
-                      }
-                    }}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-700 rounded"
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                  {editingId !== session.id && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={(e) => handleStartRename(session, e)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-700 rounded"
+                        title="Rename chat"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (confirm('Delete this chat?')) {
+                            onDeleteSession(session.id);
+                          }
+                        }}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-700 rounded"
+                        title="Delete chat"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

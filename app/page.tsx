@@ -50,6 +50,12 @@ export default function Home() {
     }
   };
 
+  const handleRenameSession = async (id: string, newTitle: string) => {
+    await chatStorage.renameSession(id, newTitle);
+    const updatedSessions = await chatStorage.getSessions();
+    setSessions(updatedSessions);
+  };
+
   const handleSendMessage = async (
     message: string,
     systemPrompt: string,
@@ -139,6 +145,7 @@ export default function Home() {
           onSelectSession={handleSelectSession}
           onNewChat={handleNewChat}
           onDeleteSession={handleDeleteSession}
+          onRenameSession={handleRenameSession}
         />
       )}
 
