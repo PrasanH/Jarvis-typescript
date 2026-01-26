@@ -1,0 +1,128 @@
+'use client';
+
+import { useState } from 'react';
+import { Send } from 'lucide-react';
+
+interface ChatInputProps {
+  onSend: (message: string, systemPrompt: string, model: string) => void;
+  disabled?: boolean;
+  systemPrompts: Array<{ label: string; content: string }>;
+  models: Array<{ value: string; label: string }>;
+}
+
+export default function ChatInput({
+  onSend,
+  disabled,
+  systemPrompts,
+  models,
+}: ChatInputProps) {
+  const [message, setMessage] = useState('');
+  const [selectedPrompt, setSelectedPrompt] = useState(systemPrompts[0].content);
+  const [customPrompt, setCustomPrompt] = useState('');
+  const [selectedModel, setSelectedModel] = useState(models[0].value);
+  const [showCustomPrompt, setShowCustomPrompt] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!message.trim() || disabled) return;
+
+    const finalPrompt = customPrompt.trim() || selectedPrompt;
+    onSend(message, finalPrompt, selectedModel);
+    setMessage('');
+  };
+
+  return (
+    <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-black p-3">
+      <div className="max-w-4xl mx-auto space-y-3">
+        {/* Settings Row */}
+        <div className="flex gap-2 flex-wrap">
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-xs font-medium text-gray-700 dark:text-amber-300 mb-1">
+              System Prompt
+            </label>
+            <select
+              value={selectedPrompt}
+              onChange={(e) => {
+                setSelectedPrompt(e.target.value);
+                setCustomPrompt('');
+              }}
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-black text-white dark:text-white focus:ring-2 focus:ring-black focus:border-transparent"
+            >
+              {systemPrompts.map((prompt, index) => (
+                <option key={index} value={prompt.content}>
+                  {prompt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="w-48">
+            <label className="block text-xs font-medium text-white dark:text-emerald-500 mb-1">
+              Model
+            </label>
+            <select
+              value={selectedModel}
+              onChange={(e) => setSelectedModel(e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-black text-white dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              {models.map((model) => (
+                <option key={model.value} value={model.value}>
+                  {model.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-end">
+            <button
+              type="button"
+              onClick={() => setShowCustomPrompt(!showCustomPrompt)}
+              className="px-3 py-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              {showCustomPrompt ? 'Hide' : 'Custom Prompt'}
+            </button>
+          </div>
+        </div>
+
+        {/* Custom Prompt */}
+        {showCustomPrompt && (
+          <div>
+            <input
+              type="text"
+              value={customPrompt}
+              onChange={(e) => setCustomPrompt(e.target.value)}
+              placeholder="Type custom system prompt..."
+              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        )}
+
+        {/* Message Input */}
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
+            placeholder="Type your message here... (Shift+Enter for new line)"
+            rows={3}
+            disabled={disabled}
+            className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black resize-none"
+          />
+          <button
+            type="submit"
+            disabled={!message.trim() || disabled}
+            className="px-3 py-1 bg-lime-800 text-white-500 rounded-lg hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 self-end"
+          >
+            <Send size={10} />
+            <span className="hidden sm:inline">Send</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
