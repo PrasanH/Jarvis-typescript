@@ -2,6 +2,8 @@
 
 A modern chat application built with Next.js 15 and TypeScript, featuring chat history sidebar and Gemini AI integration.
 
+![JARVIS Chat Interface](docs/jarvis_typescript.PNG)
+
 ## 🚀 Features
 
 - ✨ Beautiful, responsive chat UI
