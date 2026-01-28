@@ -68,7 +68,7 @@ export default function Home() {
     if (!sessionId) {
       const userMessage: Message = {
         role: 'user',
-        content: `${systemPrompt}. ${message}`,
+        content: message, // No longer concatenating systemPrompt
         timestamp: Date.now(),
       };
       const newSession = await chatStorage.createSession(userMessage);
@@ -79,7 +79,7 @@ export default function Home() {
       // Add user message to existing session
       const userMessage: Message = {
         role: 'user',
-        content: `${systemPrompt}. ${message}`,
+        content: message, // No longer concatenating systemPrompt
         timestamp: Date.now(),
       };
       await chatStorage.addMessage(sessionId, userMessage);
@@ -109,7 +109,8 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to get response');
       }
 
       const data = await response.json();
@@ -127,9 +128,9 @@ export default function Home() {
       // Refresh sessions
       const finalSessions = await chatStorage.getSessions();
       setSessions(finalSessions);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error);
-      alert('Failed to send message. Please try again.');
+      alert(`Failed to send message: ${error.message || 'Please try again.'}`);
     } finally {
       setIsLoading(false);
     }

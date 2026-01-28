@@ -22,12 +22,16 @@ export default function ChatInput({
   const [selectedModel, setSelectedModel] = useState(models[0].value);
   const [showCustomPrompt, setShowCustomPrompt] = useState(false);
 
+  const handleApplyPrompt = () => {
+    const finalPrompt = customPrompt.trim() || selectedPrompt;
+    setMessage(prev => prev ? `${finalPrompt}\n\n${prev}` : finalPrompt);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || disabled) return;
 
-    const finalPrompt = customPrompt.trim() || selectedPrompt;
-    onSend(message, finalPrompt, selectedModel);
+    onSend(message, '', selectedModel); // Send empty string for systemPrompt
     setMessage('');
   };
 
@@ -40,20 +44,29 @@ export default function ChatInput({
             <label className="block text-xs font-medium text-gray-700 dark:text-amber-300 mb-1">
               System Prompt
             </label>
-            <select
-              value={selectedPrompt}
-              onChange={(e) => {
-                setSelectedPrompt(e.target.value);
-                setCustomPrompt('');
-              }}
-              className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-black text-white dark:text-white focus:ring-2 focus:ring-black focus:border-transparent"
-            >
-              {systemPrompts.map((prompt, index) => (
-                <option key={index} value={prompt.content}>
-                  {prompt.label}
-                </option>
-              ))}
-            </select>
+            <div className="flex gap-2">
+              <select
+                value={selectedPrompt}
+                onChange={(e) => {
+                  setSelectedPrompt(e.target.value);
+                  setCustomPrompt('');
+                }}
+                className="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-black text-white dark:text-white focus:ring-2 focus:ring-black focus:border-transparent"
+              >
+                {systemPrompts.map((prompt, index) => (
+                  <option key={index} value={prompt.content}>
+                    {prompt.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={handleApplyPrompt}
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
+              >
+                Apply
+              </button>
+            </div>
           </div>
 
           <div className="w-48">
