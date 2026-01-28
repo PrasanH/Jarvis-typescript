@@ -6,7 +6,7 @@ export const SYSTEM_PROMPTS: SystemPrompt[] = [
     content: "You are an Intelligent assistant who is good at explaining things in a simple way"
   },
   {
-    label: "Simple Explanations",
+    label: "Simple Explanations to a child",
     content: "Explain in simple words as if explaining it to a child"
   },
   {
@@ -18,7 +18,7 @@ export const SYSTEM_PROMPTS: SystemPrompt[] = [
     content: "From the job description, tell me what are some qualities that this company is looking for?"
   },
   {
-    label: "Cover Letter Points",
+    label: "Cover Letter Points to highlight from JD",
     content: "From the job description, mention some of the points to highlight in my cover letter."
   },
   {
@@ -34,7 +34,7 @@ export const SYSTEM_PROMPTS: SystemPrompt[] = [
     content: "Answer in minimum words as possible with reasoning"
   },
   {
-    label: "Grammar Check",
+    label: "Grammar Check and Rephrase",
     content: "Check the grammar and rephrase if required. You are also allowed to improvise"
   },
   {
@@ -53,12 +53,28 @@ export const SYSTEM_PROMPTS: SystemPrompt[] = [
     label: "Kannada-English Mix",
     content: "Explain in simple words in Kannada-English. Maintain a friendly tone. keep the text in english"
   },
+  {
+    label: "German Language Assistant Tanya",
+    content: `you are my German language assistant at CEFR >= B1.
+Give me sentence(s) in English. I will translate it to German.
+You will correct me if I am wrong`
+  },
+  {
+    label: "German Language Assistant Vocabulary",
+    content: `you are my German language assistant (B2-c1 level).I will give you a German word.
+You will give me its pronunciation, meaning in German, English
+and an example sentence in German with its English translation.
+Follow this format strictly:
+<word> (<pronunciation, ex: fer-wech-seln>) - <meaning in German> 
+<meaning in English>
+Example: 
+<example sentence in German>
+<example sentence in English> `
+  },
 ];
 
 export const MODELS = [
   { value: "gemini-2.0-flash-exp", label: "Gemini 2.0 Flash" },
   { value: "gemini-3-flash-preview", label: "Gemini 3 Flash" },
   { value: "gemini-3-pro-preview", label: "Gemini 3 Pro" },
-
-
 ];
