@@ -20,7 +20,7 @@ export default function ChatInput({
   const [message, setMessage] = useState('');
   const [selectedPrompt, setSelectedPrompt] = useState(systemPrompts[0].content);
   const [customPrompt, setCustomPrompt] = useState('');
-  const [selectedModel, setSelectedModel] = useState(models[0].value);
+  const [selectedModel, setSelectedModel] = useState('gpt-4.1-mini');
   const [showCustomPrompt, setShowCustomPrompt] = useState(false);
 
   // Group models by provider
