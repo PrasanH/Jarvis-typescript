@@ -69,12 +69,12 @@ export default function Home() {
     // Create new session if none exists
     let sessionId = currentSessionId;
     if (!sessionId) {
-      // For new sessions:
-      // - For OpenAI: create session with user message, we'll add system message during API call
-      // - For Gemini: prepend system prompt to user message
+      // For all models: use message as-is
+      // - For OpenAI: we'll add system message during API call
+      // - For Gemini: user must use Apply button to add system prompt to their message
       const userMessage: Message = {
         role: 'user',
-        content: isOpenAI ? message : `${systemPrompt}\n\n${message}`,
+        content: message,
         timestamp: Date.now(),
       };
       
@@ -86,7 +86,7 @@ export default function Home() {
       // Add user message to existing session
       const userMessage: Message = {
         role: 'user',
-        content: isOpenAI ? message : `${systemPrompt}\n\n${message}`,
+        content: message,
         timestamp: Date.now(),
       };
       await chatStorage.addMessage(sessionId, userMessage);
