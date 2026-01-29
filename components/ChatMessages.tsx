@@ -17,7 +17,10 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  if (messages.length === 0) {
+  // Filter out system messages as they shouldn't be displayed to the user
+  const displayMessages = messages.filter(msg => msg.role !== 'system');
+
+  if (displayMessages.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center text-gray-500">
         <div className="text-center">
@@ -31,7 +34,7 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
 
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4">
-      {messages.map((message, index) => (
+      {displayMessages.map((message, index) => (
         <div
           key={index}
           className={`flex gap-3 ${

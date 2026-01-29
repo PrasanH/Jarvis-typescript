@@ -63,14 +63,21 @@ export default function Home() {
   ) => {
     if (!message.trim()) return;
 
+    // Determine if it's an OpenAI or Gemini model
+    const isOpenAI = model.startsWith('gpt-') || model.startsWith('chatgpt-') || model.startsWith('o');
+
     // Create new session if none exists
     let sessionId = currentSessionId;
     if (!sessionId) {
+      // For new sessions:
+      // - For OpenAI: create session with user message, we'll add system message during API call
+      // - For Gemini: prepend system prompt to user message
       const userMessage: Message = {
         role: 'user',
-        content: message, // No longer concatenating systemPrompt
+        content: isOpenAI ? message : `${systemPrompt}\n\n${message}`,
         timestamp: Date.now(),
       };
+      
       const newSession = await chatStorage.createSession(userMessage);
       setSessions([newSession, ...sessions]);
       sessionId = newSession.id;
@@ -79,7 +86,7 @@ export default function Home() {
       // Add user message to existing session
       const userMessage: Message = {
         role: 'user',
-        content: message, // No longer concatenating systemPrompt
+        content: isOpenAI ? message : `${systemPrompt}\n\n${message}`,
         timestamp: Date.now(),
       };
       await chatStorage.addMessage(sessionId, userMessage);
@@ -96,6 +103,26 @@ export default function Home() {
       const session = await chatStorage.getSession(sessionId);
       if (!session) return;
 
+      // Determine if it's an OpenAI model
+      const isOpenAI = model.startsWith('gpt-') || model.startsWith('chatgpt-') || model.startsWith('o');
+      
+      // For OpenAI models, add system prompt as a system message at the beginning
+      let messagesToSend = session.messages;
+      if (isOpenAI && systemPrompt) {
+        // Check if there's already a system message
+        const hasSystemMessage = session.messages.some(msg => msg.role === 'system');
+        if (!hasSystemMessage) {
+          messagesToSend = [
+            {
+              role: 'system',
+              content: systemPrompt,
+              timestamp: Date.now(),
+            },
+            ...session.messages,
+          ];
+        }
+      }
+
       // Call API
       const response = await fetch('/api/chat', {
         method: 'POST',
@@ -103,7 +130,7 @@ export default function Home() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: session.messages,
+          messages: messagesToSend,
           model,
         }),
       });

@@ -26,17 +26,23 @@ export default function ChatInput({
   // Group models by provider
   const openaiModels = models.filter(m => m.provider === 'openai');
   const geminiModels = models.filter(m => m.provider === 'gemini');
+  
+  // Determine if current model is Gemini
+  const isGeminiModel = selectedModel.startsWith('gemini-');
 
   const handleApplyPrompt = () => {
-    const finalPrompt = customPrompt.trim() || selectedPrompt;
-    setMessage(prev => prev ? `${finalPrompt}\n\n${prev}` : finalPrompt);
+    // Only apply prompt to message for Gemini models
+    if (isGeminiModel) {
+      const finalPrompt = customPrompt.trim() || selectedPrompt;
+      setMessage(prev => prev ? `${finalPrompt}\n\n${prev}` : finalPrompt);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || disabled) return;
 
-    onSend(message, '', selectedModel); // Send empty string for systemPrompt
+    onSend(message, selectedPrompt, selectedModel);
     setMessage('');
   };
 
@@ -64,13 +70,15 @@ export default function ChatInput({
                   </option>
                 ))}
               </select>
-              <button
-                type="button"
-                onClick={handleApplyPrompt}
-                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
-              >
-                Apply
-              </button>
+              {isGeminiModel && (
+                <button
+                  type="button"
+                  onClick={handleApplyPrompt}
+                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
+                >
+                  Apply
+                </button>
+              )}
             </div>
           </div>
 
