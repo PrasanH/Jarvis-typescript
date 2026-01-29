@@ -1,6 +1,6 @@
 # JARVIS Chat - Next.js + TypeScript
 
-A modern chat application built with Next.js 15 and TypeScript, featuring chat history sidebar and Gemini AI integration.
+A modern chat application built with Next.js 15 and TypeScript, featuring chat history sidebar with models from Gemini and OpenAI. 
 
 ![JARVIS Chat Interface](docs/jarvis_typescript.PNG)
 ![JARVIS Chat Interface](docs/jarvis_typescript_2.PNG)
@@ -17,6 +17,7 @@ A modern chat application built with Next.js 15 and TypeScript, featuring chat h
 
 - Node.js 18+ (Download from [nodejs.org](https://nodejs.org/))
 - A Gemini API key (Get one at [ai.google.dev](https://ai.google.dev/))
+- A OpenAI API Key. 
 
 ## 🛠️ Setup Instructions
 
@@ -47,12 +48,11 @@ This will install all required packages (React, Next.js, TypeScript, Tailwind CS
 Create a `.env.local` file in the root directory (or use the existing `.env` file):
 
 1. Create `.env.local` (recommended) or edit `.env`
-2. Add your Gemini API key:
+2. Add your Gemini and Open AI API key:
    ```
    GEMINI_API_KEY=your_api_key_here
    ```
    
-**Important**: Never commit `.env.local` to Git - it contains your secret API key!
 
 ### 4. Run the Development Server
 
