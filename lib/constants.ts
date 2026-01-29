@@ -1,4 +1,4 @@
-import { SystemPrompt } from '@/types/chat';
+import { SystemPrompt, ModelConfig } from '@/types/chat';
 
 export const SYSTEM_PROMPTS: SystemPrompt[] = [
   {
@@ -73,8 +73,19 @@ Example:
   },
 ];
 
-export const MODELS = [
-  { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash" },
-  { value: "gemini-3-flash-preview", label: "Gemini 3 Flash" },
-  { value: "gemini-3-pro-preview", label: "Gemini 3 Pro" },
+export const MODELS: ModelConfig[] = [
+  // OpenAI Models 
+  { value: "gpt-5.2", label: "GPT-5.2", provider: "openai" },
+  { value: "gpt-5-mini", label: "GPT-5 Mini", provider: "openai" },
+  { value: "gpt-5-nano", label: "GPT-5 Nano", provider: "openai" },
+  { value: "gpt-4.1", label: "GPT-4.1", provider: "openai" },
+  { value: "gpt-4.1-mini", label: "GPT-4.1 Mini", provider: "openai" },
+  { value: "o4-mini-deep-research", label: "O4 Mini Deep Research", provider: "openai" },
+  { value: "gpt-4o", label: "GPT-4o Search", provider: "openai" },
+  
+  
+  // Gemini Models
+  { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash" , provider: "gemini"},
+  { value: "gemini-3-flash-preview", label: "Gemini 3 Flash" , provider: "gemini"},
+  { value: "gemini-3-pro-preview", label: "Gemini 3 Pro" , provider: "gemini"},
 ];

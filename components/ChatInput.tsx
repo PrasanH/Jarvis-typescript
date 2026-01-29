@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { Send } from 'lucide-react';
+import { ModelConfig } from '@/types/chat';
 
 interface ChatInputProps {
   onSend: (message: string, systemPrompt: string, model: string) => void;
   disabled?: boolean;
   systemPrompts: Array<{ label: string; content: string }>;
-  models: Array<{ value: string; label: string }>;
+  models: ModelConfig[];
 }
 
 export default function ChatInput({
@@ -21,6 +22,10 @@ export default function ChatInput({
   const [customPrompt, setCustomPrompt] = useState('');
   const [selectedModel, setSelectedModel] = useState(models[0].value);
   const [showCustomPrompt, setShowCustomPrompt] = useState(false);
+
+  // Group models by provider
+  const openaiModels = models.filter(m => m.provider === 'openai');
+  const geminiModels = models.filter(m => m.provider === 'gemini');
 
   const handleApplyPrompt = () => {
     const finalPrompt = customPrompt.trim() || selectedPrompt;
@@ -78,11 +83,20 @@ export default function ChatInput({
               onChange={(e) => setSelectedModel(e.target.value)}
               className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-black text-white dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              {models.map((model) => (
-                <option key={model.value} value={model.value}>
-                  {model.label}
-                </option>
-              ))}
+              <optgroup label="🤖 OpenAI Models">
+                {openaiModels.map((model) => (
+                  <option key={model.value} value={model.value}>
+                    {model.label}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="✨ Gemini Models">
+                {geminiModels.map((model) => (
+                  <option key={model.value} value={model.value}>
+                    {model.label}
+                  </option>
+                ))}
+              </optgroup>
             </select>
           </div>
 

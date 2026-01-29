@@ -1,6 +1,6 @@
 // Types for our chat application
 export interface Message {
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: number;
 }
@@ -16,4 +16,12 @@ export interface ChatSession {
 export interface SystemPrompt {
   label: string;
   content: string;
+}
+
+export type ModelProvider = 'openai' | 'gemini';
+
+export interface ModelConfig {
+  value: string;
+  label: string;
+  provider: ModelProvider;
 }
