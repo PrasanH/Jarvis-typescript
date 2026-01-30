@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "JARVIS Chat",
-  description: "Chat with JARVIS AI Assistant",
+  title: "JARVIS TS",
+  description: "JARVIS AI Assistant",
 };
 
 export default function RootLayout({
