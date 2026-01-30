@@ -34,7 +34,7 @@ async function handleOpenAI(messages: any[], model: string) {
   // Only add temperature and max_tokens for models that support them
   if (!isGpt5MiniOrNano) {
     completionParams.temperature = 0.7;
-    completionParams.max_tokens = 2048;
+    completionParams.max_tokens = 15000;
   }
 
   const completion = await openai.chat.completions.create(completionParams);
@@ -65,7 +65,7 @@ async function handleGemini(messages: any[], model: string) {
   const chat = genModel.startChat({
     history,
     generationConfig: {
-      maxOutputTokens: 2048,
+      maxOutputTokens: 15000,
       temperature: 0.7,
     },
   });
