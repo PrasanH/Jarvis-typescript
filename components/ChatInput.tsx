@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Send } from 'lucide-react';
+import { Send, ChevronDown, ChevronUp } from 'lucide-react';
 import { ModelConfig } from '@/types/chat';
 
 interface ChatInputProps {
@@ -22,6 +22,7 @@ export default function ChatInput({
   const [customPrompt, setCustomPrompt] = useState('');
   const [selectedModel, setSelectedModel] = useState('gpt-4.1-mini');
   const [showCustomPrompt, setShowCustomPrompt] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Group models by provider
   const openaiModels = models.filter(m => m.provider === 'openai');
@@ -49,8 +50,24 @@ export default function ChatInput({
   return (
     <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-black p-3">
       <div className="max-w-4xl mx-auto space-y-3">
+        {/* Settings Toggle Button */}
+        <div className="flex justify-between items-center">
+          <button
+            type="button"
+            onClick={() => setShowSettings(!showSettings)}
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          >
+            {showSettings ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            <span>Settings</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              ({selectedModel})
+            </span>
+          </button>
+        </div>
+
         {/* Settings Row */}
-        <div className="flex gap-2 flex-wrap">
+        {showSettings && (
+          <div className="flex gap-2 flex-wrap">
           <div className="flex-1 min-w-[200px]">
             <label className="block text-xs font-medium text-gray-700 dark:text-amber-300 mb-1">
               System Prompt
@@ -118,9 +135,10 @@ export default function ChatInput({
             </button>
           </div>
         </div>
+        )}
 
         {/* Custom Prompt */}
-        {showCustomPrompt && (
+        {showSettings && showCustomPrompt && (
           <div>
             <input
               type="text"
