@@ -166,15 +166,15 @@ export default function ChatInput({
                 handleSubmit(e);
               }
             }}
-            placeholder="Type your message here... (Shift+Enter for new line)"
-            rows={6}
+            placeholder="Type your message here..."
+            rows={5}
             disabled={disabled}
-            className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black resize-y min-h-[144px] max-h-[400px] overflow-y-auto"
+            className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-3xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black resize-y min-h-[144px] max-h-[400px] overflow-y-auto"
           />
           <button
             type="submit"
             disabled={!message.trim() || disabled}
-            className="px-3 py-1 bg-lime-800 text-white-500 rounded-lg hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 self-end"
+            className="px-3 py-1 bg-lime-800 text-white-500 rounded-2xl hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 self-end"
           >
             <Send size={10} />
             <span className="hidden sm:inline">Send</span>
