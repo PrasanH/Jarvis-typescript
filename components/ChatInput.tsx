@@ -45,6 +45,12 @@ export default function ChatInput({
 
     onSend(message, selectedPrompt, selectedModel);
     setMessage('');
+    
+    // Reset textarea height after submission
+    const textarea = (e.target as HTMLFormElement).querySelector('textarea');
+    if (textarea) {
+      textarea.style.height = 'auto';
+    }
   };
 
   return (
