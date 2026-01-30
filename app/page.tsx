@@ -20,10 +20,8 @@ export default function Home() {
       const loadedSessions = await chatStorage.getSessions();
       setSessions(loadedSessions);
       
-      // Auto-select first session if available
-      if (loadedSessions.length > 0 && !currentSessionId) {
-        setCurrentSessionId(loadedSessions[0].id);
-      }
+      // Don't auto-select any session - start with a blank new chat
+      // User can manually select from history if needed
     };
     loadSessions();
   }, []);
