@@ -33,27 +33,28 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-      {displayMessages.map((message, index) => (
-        <div
-          key={index}
-          className={`flex gap-3 ${
-            message.role === 'user' ? 'justify-end' : 'justify-start'
-          }`}
-        >
-          {message.role === 'assistant' && (
-            <div className="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center flex-shrink-0">
-              <Bot size={20} className="text-white" />
-            </div>
-          )}
-          
+    <div className="flex-1 overflow-y-auto p-4">
+      <div className="max-w-4xl mx-auto space-y-4">
+        {displayMessages.map((message, index) => (
           <div
-            className={`max-w-[70%] rounded-lg p-4 ${
-              message.role === 'user'
-                ? 'bg-black text-white border border-red-400'
-                : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white'
+            key={index}
+            className={`flex gap-3 ${
+              message.role === 'user' ? 'justify-end' : 'justify-start'
             }`}
           >
+            {message.role === 'assistant' && (
+              <div className="w-8 h-8 rounded-full bg-blue-400 flex items-center justify-center flex-shrink-0">
+                <Bot size={20} className="text-white" />
+              </div>
+            )}
+            
+            <div
+              className={`max-w-[80%] rounded-lg p-4 ${
+                message.role === 'user'
+                  ? 'bg-black text-white border border-red-400'
+                  : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white'
+              }`}
+            >
             <div className="prose prose-sm max-w-none dark:prose-invert whitespace-pre-wrap">
               <ReactMarkdown 
                 remarkPlugins={[remarkGfm]}
@@ -87,6 +88,7 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
         </div>
       ))}
       <div ref={messagesEndRef} />
+      </div>
     </div>
   );
 }
