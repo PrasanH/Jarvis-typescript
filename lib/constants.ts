@@ -86,6 +86,6 @@ export const MODELS: ModelConfig[] = [
   
   // Gemini Models
   { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash" , provider: "gemini"},
-  { value: "gemini-3-flash-preview", label: "Gemini 3 Flash" , provider: "gemini"},
-  { value: "gemini-3-pro-preview", label: "Gemini 3 Pro" , provider: "gemini"},
+  { value: "gemini-3-flash", label: "Gemini 3 Flash" , provider: "gemini"},
+  { value: "gemini-3-pro", label: "Gemini 3 Pro" , provider: "gemini"},
 ];
