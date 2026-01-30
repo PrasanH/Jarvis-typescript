@@ -136,7 +136,12 @@ export default function ChatInput({
         <form onSubmit={handleSubmit} className="flex gap-2">
           <textarea
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              // Auto-resize textarea
+              e.target.style.height = 'auto';
+              e.target.style.height = e.target.scrollHeight + 'px';
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -144,9 +149,9 @@ export default function ChatInput({
               }
             }}
             placeholder="Type your message here... (Shift+Enter for new line)"
-            rows={3}
+            rows={6}
             disabled={disabled}
-            className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black resize-none"
+            className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-black resize-y min-h-[144px] max-h-[400px] overflow-y-auto"
           />
           <button
             type="submit"
