@@ -178,7 +178,7 @@ export default function Home() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <div className="bg-gray-900 border-b border-gray-700 p-4">
+        <div className="bg-gray-900 border-b border-gray-700 ">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
@@ -199,7 +199,7 @@ export default function Home() {
                   />
                 </svg>
               </button>
-              <h1 className="text-xl font-bold">🤖 JARVIS Chat</h1>
+              <h1 className="text-lg font-bold">🤖 JARVIS Chat</h1>
             </div>
             {currentSession && (
               <p className="text-sm text-gray-500">
