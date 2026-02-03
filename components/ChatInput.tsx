@@ -23,7 +23,7 @@ export default function ChatInput({
   const [selectedModel, setSelectedModel] = useState('gpt-4.1-mini');
   const [showCustomPrompt, setShowCustomPrompt] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [containerHeight, setContainerHeight] = useState(300); // Default height for entire input block
+  const [containerHeight, setContainerHeight] = useState(250); // Default height for entire input block
   
   const containerRef = useRef<HTMLDivElement>(null);
   const isResizing = useRef(false);
@@ -42,7 +42,7 @@ export default function ChatInput({
         e.preventDefault();
         const containerRect = containerRef.current.getBoundingClientRect();
         const newHeight = containerRect.bottom - e.clientY;
-        const clampedHeight = Math.max(150, Math.min(800, newHeight));
+        const clampedHeight = Math.max(150, Math.min(400, newHeight));
         setContainerHeight(clampedHeight);
       }
     };
