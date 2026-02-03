@@ -1,14 +1,42 @@
 'use client';
 
 import { Message } from '@/types/chat';
-import { User, Bot } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { User, Bot, Copy, Check } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 interface ChatMessagesProps {
   messages: Message[];
 }
+
+const CopyButton = ({ content, isUser }: { content: string; isUser: boolean }) => {
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className={`absolute bottom-2 right-2 p-1.5 rounded-md transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100 ${
+        isUser
+          ? 'hover:bg-gray-800 text-gray-400 hover:text-white'
+          : 'hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400'
+      }`}
+      title="Copy message"
+    >
+      {isCopied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+    </button>
+  );
+};
 
 export default function ChatMessages({ messages }: ChatMessagesProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -49,12 +77,13 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
             )}
             
             <div
-              className={`max-w-[80%] rounded-lg p-4 ${
+              className={`max-w-[80%] rounded-lg p-4 relative group ${
                 message.role === 'user'
                   ? 'bg-black text-white border border-red-400'
                   : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white'
               }`}
             >
+            <CopyButton content={message.content} isUser={message.role === 'user'} />
             <div className="prose prose-sm max-w-none dark:prose-invert whitespace-pre-wrap">
               <ReactMarkdown 
                 remarkPlugins={[remarkGfm]}
