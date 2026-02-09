@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ChatSession } from '@/types/chat';
-import { MessageSquare, Trash2, Plus, Edit2, Check, X } from 'lucide-react';
+import { MessageSquare, Trash2, Plus, Edit2, Check, X, GripVertical } from 'lucide-react';
 
 interface ChatSidebarProps {
   sessions: ChatSession[];
@@ -23,6 +23,42 @@ export default function ChatSidebar({
 }: ChatSidebarProps) {
   const [editingId, setEditingId] = React.useState<string | null>(null);
   const [editTitle, setEditTitle] = React.useState('');
+  const [sidebarWidth, setSidebarWidth] = React.useState(256); // Default width in pixels (w-64)
+  
+  const sidebarRef = React.useRef<HTMLDivElement>(null);
+  const isResizing = React.useRef(false);
+
+  // Resize handler
+  React.useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isResizing.current && sidebarRef.current) {
+        e.preventDefault();
+        const newWidth = e.clientX;
+        const clampedWidth = Math.max(200, Math.min(500, newWidth));
+        setSidebarWidth(clampedWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      isResizing.current = false;
+      document.body.style.cursor = 'default';
+      document.body.style.userSelect = 'auto';
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
+  const startResizing = () => {
+    isResizing.current = true;
+    document.body.style.cursor = 'ew-resize';
+    document.body.style.userSelect = 'none';
+  };
 
   const handleStartRename = (session: ChatSession, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -58,7 +94,11 @@ export default function ChatSidebar({
   };
 
   return (
-    <div className="w-64 bg-black text-white flex flex-col h-screen">
+    <div 
+      ref={sidebarRef}
+      className="bg-black text-white flex flex-col h-screen relative"
+      style={{ width: `${sidebarWidth}px` }}
+    >
       {/* Header */}
       <div className="p-4 border-b border-gray-700">
         <button
@@ -161,6 +201,14 @@ export default function ChatSidebar({
       {/* Footer */}
       <div className="p-4 border-t border-gray-700 text-xs text-gray-400">
         JARVIS Chat v1.0
+      </div>
+
+      {/* Resize Handle */}
+      <div 
+        className="absolute top-0 right-0 bottom-0 w-2 hover:bg-blue-500 cursor-ew-resize flex items-center justify-center group transition-colors z-10"
+        onMouseDown={startResizing}
+      >
+        <GripVertical size={16} className="text-gray-500 group-hover:text-white opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
     </div>
   );
