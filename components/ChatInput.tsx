@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, ChevronDown, ChevronUp, GripHorizontal } from 'lucide-react';
+import { Send, ChevronDown, ChevronUp, GripHorizontal, X } from 'lucide-react';
 import { ModelConfig } from '@/types/chat';
 
 interface ChatInputProps {
@@ -9,6 +9,8 @@ interface ChatInputProps {
   disabled?: boolean;
   systemPrompts: Array<{ label: string; content: string }>;
   models: ModelConfig[];
+  editingMessage?: string;
+  onCancelEdit?: () => void;
 }
 
 export default function ChatInput({
@@ -16,6 +18,8 @@ export default function ChatInput({
   disabled,
   systemPrompts,
   models,
+  editingMessage,
+  onCancelEdit,
 }: ChatInputProps) {
   const [message, setMessage] = useState('');
   const [selectedPrompt, setSelectedPrompt] = useState(systemPrompts[0].content);
@@ -27,6 +31,13 @@ export default function ChatInput({
   
   const containerRef = useRef<HTMLDivElement>(null);
   const isResizing = useRef(false);
+
+  // Populate message when editing
+  useEffect(() => {
+    if (editingMessage !== undefined) {
+      setMessage(editingMessage);
+    }
+  }, [editingMessage]);
 
   // Group models by provider
   const openaiModels = models.filter(m => m.provider === 'openai');
@@ -81,7 +92,11 @@ export default function ChatInput({
     if (!message.trim() || disabled) return;
 
     onSend(message, selectedPrompt, selectedModel);
-    setMessage('');
+    
+    // Only clear if not editing (editing is cleared by parent)
+    if (!editingMessage) {
+      setMessage('');
+    }
     
     // Reset textarea height after submission
     const textarea = (e.target as HTMLFormElement).querySelector('textarea');
@@ -107,6 +122,25 @@ export default function ChatInput({
         style={{ height: `${containerHeight}px` }}
       >
         <div className="max-w-4xl mx-auto space-y-3 h-full flex flex-col">
+          {/* Editing Mode Indicator */}
+          {editingMessage !== undefined && (
+            <div className="flex items-center gap-2 px-3 py-2 bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700 rounded-lg flex-shrink-0">
+              <span className="text-sm text-yellow-800 dark:text-yellow-200 flex-1">
+                ✏️ Editing message - response will be regenerated
+              </span>
+              {onCancelEdit && (
+                <button
+                  type="button"
+                  onClick={onCancelEdit}
+                  className="p-1 hover:bg-yellow-200 dark:hover:bg-yellow-800 rounded transition-colors"
+                  title="Cancel editing"
+                >
+                  <X size={16} className="text-yellow-800 dark:text-yellow-200" />
+                </button>
+              )}
+            </div>
+          )}
+
           {/* Settings Toggle Button */}
           <div className="flex justify-between items-center flex-shrink-0">
             <button

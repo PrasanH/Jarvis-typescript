@@ -1,13 +1,15 @@
 'use client';
 
 import { Message } from '@/types/chat';
-import { User, Bot, Copy, Check } from 'lucide-react';
+import { User, Bot, Copy, Check, Edit } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 interface ChatMessagesProps {
   messages: Message[];
+  onEditMessage?: (index: number) => void;
+  editingIndex?: number;
 }
 
 const CopyButton = ({ content, isUser }: { content: string; isUser: boolean }) => {
@@ -26,19 +28,19 @@ const CopyButton = ({ content, isUser }: { content: string; isUser: boolean }) =
   return (
     <button
       onClick={handleCopy}
-      className={`absolute bottom-2 right-2 p-1.5 rounded-md transition-all duration-200 opacity-0 group-hover:opacity-100 focus:opacity-100 ${
+      className={`p-1.5 rounded-md transition-all duration-200 ${
         isUser
           ? 'hover:bg-gray-800 text-gray-400 hover:text-white'
           : 'hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400'
       }`}
-      title="Copy message"
+      title="Copy"
     >
       {isCopied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
     </button>
   );
 };
 
-export default function ChatMessages({ messages }: ChatMessagesProps) {
+export default function ChatMessages({ messages, onEditMessage, editingIndex }: ChatMessagesProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,6 +49,11 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
 
   // Filter out system messages as they shouldn't be displayed to the user
   const displayMessages = messages.filter(msg => msg.role !== 'system');
+  
+  // Find the index of the last user message
+  const lastUserMessageIndex = displayMessages.reduce((lastIndex, msg, index) => {
+    return msg.role === 'user' ? index : lastIndex;
+  }, -1);
 
   if (displayMessages.length === 0) {
     return (
@@ -81,9 +88,25 @@ export default function ChatMessages({ messages }: ChatMessagesProps) {
                 message.role === 'user'
                   ? 'bg-black text-white border border-red-400'
                   : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white'
+              } ${
+                editingIndex !== undefined && index === editingIndex
+                  ? 'ring-2 ring-yellow-400 ring-offset-2 dark:ring-offset-black'
+                  : ''
               }`}
             >
-            <CopyButton content={message.content} isUser={message.role === 'user'} />
+            {/* Action Buttons */}
+            <div className="absolute bottom-2 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <CopyButton content={message.content} isUser={message.role === 'user'} />
+              {message.role === 'user' && onEditMessage && index === lastUserMessageIndex && (
+                <button
+                  onClick={() => onEditMessage(index)}
+                  className="p-1.5 rounded-md transition-all duration-200 hover:bg-gray-800 text-gray-400 hover:text-yellow-400"
+                  title="Edit and regenerate"
+                >
+                  <Edit size={14} />
+                </button>
+              )}
+            </div>
             <div className="prose prose-sm max-w-none dark:prose-invert whitespace-pre-wrap">
               <ReactMarkdown 
                 remarkPlugins={[remarkGfm]}

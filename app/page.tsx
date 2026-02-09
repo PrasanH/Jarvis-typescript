@@ -13,6 +13,7 @@ export default function Home() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [editingMessage, setEditingMessage] = useState<{index: number, content: string} | null>(null);
 
   // Load sessions on mount
   useEffect(() => {
@@ -54,6 +55,30 @@ export default function Home() {
     setSessions(updatedSessions);
   };
 
+  const handleEditMessage = async (messageIndex: number) => {
+    if (!currentSessionId || !currentSession) return;
+    
+    // Filter out system messages to get the display index
+    const displayMessages = currentSession.messages.filter(msg => msg.role !== 'system');
+    const messageToEdit = displayMessages[messageIndex];
+    
+    if (messageToEdit.role !== 'user') return;
+    
+    // Find the actual index in the full messages array
+    const actualIndex = currentSession.messages.indexOf(messageToEdit);
+    
+    // Set editing state with the message content and index
+    // Don't remove messages yet - only when user actually sends
+    setEditingMessage({
+      index: actualIndex,
+      content: messageToEdit.content
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingMessage(null);
+  };
+
   const handleSendMessage = async (
     message: string,
     systemPrompt: string,
@@ -64,35 +89,69 @@ export default function Home() {
     // Determine if it's an OpenAI or Gemini model
     const isOpenAI = model.startsWith('gpt-') || model.startsWith('chatgpt-') || model.startsWith('o');
 
-    // Create new session if none exists
-    let sessionId = currentSessionId;
-    if (!sessionId) {
-      // For all models: use message as-is
-      // - For OpenAI: we'll add system message during API call
-      // - For Gemini: user must use Apply button to add system prompt to their message
+    // If editing, replace the message at the editing index
+    if (editingMessage) {
+      if (!currentSessionId) return;
+      
       const userMessage: Message = {
         role: 'user',
         content: message,
         timestamp: Date.now(),
       };
       
-      const newSession = await chatStorage.createSession(userMessage);
-      setSessions([newSession, ...sessions]);
-      sessionId = newSession.id;
-      setCurrentSessionId(sessionId);
+      // Get current session and update the message at the editing index
+      const session = await chatStorage.getSession(currentSessionId);
+      if (!session) return;
+      
+      // Remove all messages after the editing index (including the old user message)
+      const updatedMessages = session.messages.slice(0, editingMessage.index);
+      // Add the new edited message
+      updatedMessages.push(userMessage);
+      
+      await chatStorage.updateSession(currentSessionId, {
+        messages: updatedMessages
+      });
+      
+      // Clear editing state
+      setEditingMessage(null);
+      
+      // Refresh sessions
+      const refreshedSessions = await chatStorage.getSessions();
+      setSessions(refreshedSessions);
+      
+      // Continue with API call below...
     } else {
-      // Add user message to existing session
-      const userMessage: Message = {
-        role: 'user',
-        content: message,
-        timestamp: Date.now(),
-      };
-      await chatStorage.addMessage(sessionId, userMessage);
+      // Create new session if none exists
+      let sessionId = currentSessionId;
+      if (!sessionId) {
+        const userMessage: Message = {
+          role: 'user',
+          content: message,
+          timestamp: Date.now(),
+        };
+        
+        const newSession = await chatStorage.createSession(userMessage);
+        setSessions([newSession, ...sessions]);
+        sessionId = newSession.id;
+        setCurrentSessionId(sessionId);
+      } else {
+        // Add user message to existing session
+        const userMessage: Message = {
+          role: 'user',
+          content: message,
+          timestamp: Date.now(),
+        };
+        await chatStorage.addMessage(sessionId, userMessage);
+      }
+
+      // Refresh sessions to show user message
+      const updatedSessions = await chatStorage.getSessions();
+      setSessions(updatedSessions);
     }
 
-    // Refresh sessions to show user message
-    const updatedSessions = await chatStorage.getSessions();
-    setSessions(updatedSessions);
+    // Get session ID (either from editing or new/existing session)
+    const sessionId = currentSessionId;
+    if (!sessionId) return;
 
     setIsLoading(true);
 
@@ -210,7 +269,11 @@ export default function Home() {
         </div>
 
         {/* Messages */}
-        <ChatMessages messages={currentSession?.messages || []} />
+        <ChatMessages 
+          messages={currentSession?.messages || []} 
+          onEditMessage={handleEditMessage}
+          editingIndex={editingMessage ? currentSession?.messages.filter(msg => msg.role !== 'system').indexOf(currentSession.messages[editingMessage.index]) : undefined}
+        />
 
         {/* Input */}
         <ChatInput
@@ -218,6 +281,8 @@ export default function Home() {
           disabled={isLoading}
           systemPrompts={SYSTEM_PROMPTS}
           models={MODELS}
+          editingMessage={editingMessage?.content}
+          onCancelEdit={handleCancelEdit}
         />
 
         {/* Loading Indicator */}
