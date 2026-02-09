@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ChatSession } from '@/types/chat';
-import { MessageSquare, Trash2, Plus, Edit2, Check, X, GripVertical } from 'lucide-react';
+import { MessageSquare, Trash2, Plus, Edit2, Check, X, GripVertical, MessageSquarePlus } from 'lucide-react';
 
 interface ChatSidebarProps {
   sessions: ChatSession[];
@@ -103,10 +103,10 @@ export default function ChatSidebar({
       <div className="p-4 border-b border-gray-700">
         <button
           onClick={onNewChat}
-          className="w-full flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 rounded-lg px-4 py-3 transition-colors"
+          className="w-10 flex items-center justify-center bg-gray-800 hover:bg-gray-700 rounded-lg p-2 transition-colors"
+          title="New Chat"
         >
-          <Plus size={20} />
-          <span className="font-medium">New Chat</span>
+          <MessageSquarePlus size={25} />
         </button>
       </div>
 
