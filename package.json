@@ -10,13 +10,16 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
+    "katex": "^0.16.28",
     "lucide-react": "^0.468.0",
     "next": "^15.5.9",
     "openai": "^6.17.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1"
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^22",

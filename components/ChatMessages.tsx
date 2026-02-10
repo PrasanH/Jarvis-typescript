@@ -5,6 +5,9 @@ import { User, Bot, Copy, Check, Edit } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -109,7 +112,8 @@ export default function ChatMessages({ messages, onEditMessage, editingIndex }: 
             </div>
             <div className="prose prose-sm max-w-none dark:prose-invert whitespace-pre-wrap">
               <ReactMarkdown 
-                remarkPlugins={[remarkGfm]}
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeKatex]}
                 components={{
                   code: ({ inline, className, children, ...props }: any) => {
                     const match = /language-(\w+)/.exec(className || '');
@@ -124,7 +128,34 @@ export default function ChatMessages({ messages, onEditMessage, editingIndex }: 
                         {children}
                       </code>
                     );
-                  }
+                  },
+                  table: ({ children, ...props }) => (
+                    <div className="overflow-x-auto my-4">
+                      <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-600 border border-gray-300 dark:border-gray-600" {...props}>
+                        {children}
+                      </table>
+                    </div>
+                  ),
+                  thead: ({ children, ...props }) => (
+                    <thead className="bg-gray-100 dark:bg-gray-800" {...props}>
+                      {children}
+                    </thead>
+                  ),
+                  th: ({ children, ...props }) => (
+                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider border-r border-gray-300 dark:border-gray-600 last:border-r-0" {...props}>
+                      {children}
+                    </th>
+                  ),
+                  td: ({ children, ...props }) => (
+                    <td className="px-4 py-2 text-sm border-r border-gray-300 dark:border-gray-600 last:border-r-0" {...props}>
+                      {children}
+                    </td>
+                  ),
+                  tr: ({ children, ...props }) => (
+                    <tr className="border-b border-gray-300 dark:border-gray-600 last:border-b-0" {...props}>
+                      {children}
+                    </tr>
+                  ),
                 }}
               >
                 {message.content}
